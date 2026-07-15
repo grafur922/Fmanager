@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+
+# Build and test output
+dist/
+skills/
+dist-ssr/
+coverage/
+*.tsbuildinfo
+
+# Environment files
+.env
+.env.*
+!.env.example
+*.local
+
+# Logs and caches
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.cache/
+.vite/
+tmp/
+temp/
+
+# Runtime data and uploaded files
+data/
+public_files/
+
+# Editor and OS files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+#Others
+ARCHITECTURE.md
+TODO.md
+skills-introduction.md
