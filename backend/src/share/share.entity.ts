@@ -36,7 +36,7 @@ export class Share {
   @Column({ type: 'integer', default: 0 })
   downloadCount: number;
 
-  @Column({ nullable: true, select: false })
+  @Column({ type: 'varchar', nullable: true, select: false })
   passwordHash: string | null;
 
   @ManyToOne(() => User, (user) => user.shares, {
