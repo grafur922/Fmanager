@@ -4,8 +4,8 @@
       <div class="login-brand"><span>FH</span><strong>FileHub Console</strong></div>
       <div class="login-story__content">
         <p class="login-kicker">PRIVATE FILE INFRASTRUCTURE</p>
-        <h1>让每一次上传<br />都有进度，也有退路。</h1>
-        <p>面向个人服务器与小团队的文件存储控制台。分片上传、断点续传、公开分享和访问记录集中管理。</p>
+        <h1>资源管理</h1>
+        <!-- <p>面向个人服务器与小团队的文件存储控制台。分片上传、断点续传、公开分享和访问记录集中管理。</p> -->
         <div class="transfer-diagram" aria-hidden="true">
           <div class="transfer-file"><el-icon><Document /></el-icon><span>archive.tar</span><b>2.8 GB</b></div>
           <div class="transfer-line"><i></i><i></i><i></i><i></i><span>72%</span></div>
@@ -27,7 +27,7 @@
           </el-form-item>
           <el-button type="primary" size="large" class="login-submit" :loading="loading" @click="handleLogin">登录控制台</el-button>
         </el-form>
-        <div class="login-security"><el-icon><Lock /></el-icon><span>生产部署前请通过环境变量设置强密码和独立 JWT 密钥。</span></div>
+        <!-- <div class="login-security"><el-icon><Lock /></el-icon><span>生产部署前请通过环境变量设置强密码和独立 JWT 密钥。</span></div> -->
       </div>
     </section>
   </main>

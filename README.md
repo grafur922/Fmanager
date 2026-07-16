@@ -409,16 +409,43 @@ Migration 不会移动实际文件，也不会为历史文件建立 SHA-256 内�
 - 后端端口：`3000`；
 - Nginx 与后端位于同一台服务器。
 
-### 1. 创建持久化目录
+### 1. 创建 Linux 服务用户
+
+systemd 示例使用独立的 `filehub` 系统用户运行后端。该用户禁止交互登录，也不需要创建 Home 目录：
 
 ```bash
-sudo install -d -o filehub -g filehub /srv/filehub/files
-sudo install -d -o filehub -g filehub /srv/filehub/upload_sessions
-sudo install -d -o filehub -g filehub /srv/filehub/trash
-sudo install -d -o filehub -g filehub /srv/filehub/data
+sudo useradd \
+  --system \
+  --user-group \
+  --home-dir /opt/filehub \
+  --no-create-home \
+  --shell /usr/sbin/nologin \
+  filehub
+
+id filehub
 ```
 
-### 2. 生产环境变量
+如果 `id filehub` 已经能够返回用户信息，则不需要重复执行 `useradd`。
+
+这里的 `filehub` 是 **Linux 系统服务用户**，用于限制后端进程的文件权限；PostgreSQL 中的 `filehub` 是 **数据库角色**，需要单独创建。两者可以同名，但互不关联。
+
+应用代码可以继续由 `root` 或部署账号持有，只需要确保服务用户能够读取后端构建产物：
+
+```bash
+sudo chown -R root:filehub /opt/filehub
+sudo chmod -R g+rX /opt/filehub
+```
+
+### 2. 创建持久化目录
+
+```bash
+sudo install -d -m 0750 -o filehub -g filehub /srv/filehub/files
+sudo install -d -m 0750 -o filehub -g filehub /srv/filehub/upload_sessions
+sudo install -d -m 0750 -o filehub -g filehub /srv/filehub/trash
+sudo install -d -m 0750 -o filehub -g filehub /srv/filehub/data
+```
+
+### 3. 生产环境变量
 
 `/opt/filehub/backend/.env` 示例：
 
@@ -463,7 +490,7 @@ sudo chmod 600 /opt/filehub/backend/.env
 
 不要把 `.env`、数据库备份、内容索引或用户文件提交到代码仓库或放入前端静态目录。
 
-### 3. 安装、迁移和构建
+### 4. 安装、迁移和构建
 
 ```bash
 cd /opt/filehub/backend
@@ -479,7 +506,7 @@ npm run build
 
 前端构建产物位于 `frontend/dist`，后端构建产物位于 `backend/dist`。
 
-### 4. systemd 示例
+### 5. systemd 示例
 
 `/etc/systemd/system/filehub.service`：
 
@@ -513,7 +540,7 @@ sudo systemctl status filehub
 
 应用会在 `WorkingDirectory` 中读取 `backend/.env`。
 
-### 5. Nginx 示例
+### 6. Nginx 示例
 
 ```nginx
 server {
