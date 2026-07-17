@@ -154,13 +154,42 @@
           </el-select>
         </el-form-item>
         <el-form-item label="访问密码">
-          <el-radio-group v-model="editForm.passwordMode">
-            <el-radio-button value="keep">保持不变</el-radio-button>
-            <el-radio-button value="replace">设置新密码</el-radio-button>
-            <el-radio-button v-if="editingShare?.hasPassword" value="remove">
-              移除密码
-            </el-radio-button>
-          </el-radio-group>
+          <div class="password-mode-control" role="radiogroup" aria-label="密码设置方式">
+            <button
+              type="button"
+              role="radio"
+              :aria-checked="editForm.passwordMode === 'keep'"
+              :class="{ 'is-active': editForm.passwordMode === 'keep' }"
+              :disabled="saving"
+              @click="setPasswordMode('keep')"
+            >
+              <el-icon><Check /></el-icon>
+              <span>保持不变</span>
+            </button>
+            <button
+              type="button"
+              role="radio"
+              :aria-checked="editForm.passwordMode === 'replace'"
+              :class="{ 'is-active': editForm.passwordMode === 'replace' }"
+              :disabled="saving"
+              @click="setPasswordMode('replace')"
+            >
+              <el-icon><EditPen /></el-icon>
+              <span>设置新密码</span>
+            </button>
+            <button
+              v-if="editingShare?.hasPassword"
+              type="button"
+              role="radio"
+              :aria-checked="editForm.passwordMode === 'remove'"
+              :class="{ 'is-active': editForm.passwordMode === 'remove' }"
+              :disabled="saving"
+              @click="setPasswordMode('remove')"
+            >
+              <el-icon><Delete /></el-icon>
+              <span>移除密码</span>
+            </button>
+          </div>
           <el-input
             v-if="editForm.passwordMode === 'replace'"
             v-model="editForm.password"
@@ -217,6 +246,7 @@
 import { computed, onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import {
+  Check,
   Delete,
   Document,
   EditPen,
@@ -340,6 +370,11 @@ function openEditDialog(share: ShareInfo): void {
   editForm.limitEnabled = share.maxDownloads !== null
   editForm.maxDownloads = share.maxDownloads || Math.max(10, share.downloadCount + 1)
   editVisible.value = true
+}
+
+function setPasswordMode(mode: PasswordMode): void {
+  editForm.passwordMode = mode
+  if (mode !== 'replace') editForm.password = ''
 }
 
 async function saveShareSettings(): Promise<void> {
@@ -578,6 +613,49 @@ onMounted(fetchShares)
   justify-content: space-between;
   color: #5f6d7e;
   font-size: 12px;
+}
+.password-mode-control {
+  width: 100%;
+  display: flex;
+  align-items: stretch;
+}
+.password-mode-control button {
+  min-width: 0;
+  min-height: 34px;
+  flex: 1;
+  margin-left: -1px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border: 1px solid #d8dce6;
+  color: #526174;
+  background: #fff;
+  cursor: pointer;
+  font-size: 12px;
+}
+.password-mode-control button:first-child {
+  margin-left: 0;
+}
+.password-mode-control button:hover {
+  position: relative;
+  z-index: 1;
+  color: #1677ff;
+  border-color: #79adf7;
+}
+.password-mode-control button.is-active {
+  position: relative;
+  z-index: 2;
+  color: #fff;
+  background: #1677ff;
+  border-color: #1677ff;
+}
+.password-mode-control button:disabled {
+  color: #a8b0bb;
+  background: #f4f5f7;
+  border-color: #e1e4e9;
+  cursor: not-allowed;
 }
 .password-input {
   margin-top: 10px;
